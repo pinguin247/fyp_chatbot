@@ -1,14 +1,11 @@
-import React, {useState, useEffect} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View, Button} from 'react-native';
-import auth from '@react-native-firebase/auth';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
+import React, {Component} from 'react';
+import {View, Text, SafeAreaView} from 'react-native';
+import {GiftedChat} from 'react-native-gifted-chat';
+import {Dialogflow_V2} from 'react-native-dialogflow';
+import {dialogflowConfig} from '../env';
+import firestore from '@react-native-firebase/firestore';
 
-export default function Login({navigation}) {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState([]);
+const botAvatar = require('../assets/images/mascot.png');
 
 const BOT = {
   _id: 2,
@@ -24,7 +21,7 @@ class Chatbot extends Component {
     name: '',
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     Dialogflow_V2.setConfiguration(
       dialogflowConfig.client_email,
       dialogflowConfig.private_key,
@@ -34,6 +31,32 @@ class Chatbot extends Component {
 
     const {name, id} = this.props.route.params;
     console.log(this.props);
+
+    // load exercise 1 based on medical condition
+    // get medical condition
+    console.log(name);
+    medicalCondition = await firestore()
+      .collection('Users')
+      .doc(name)
+      .get()
+      .then(function (doc) {
+        // console.log(doc.data().medicalCondition);
+        return doc.data().medicalCondition; //must return variable, if not cannot access it outside of this block
+      });
+
+    console.log(medicalCondition);
+
+    const snapshot = await firestore()
+      .collection(medicalCondition)
+      .limit(1)
+      .get();
+
+    const exercise = snapshot.docs.map(doc => doc.id);
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return;
+    }
+    console.log(exercise);
 
     firestore()
       .collection('ChatbotHistory')
@@ -59,6 +82,7 @@ class Chatbot extends Component {
               name: firebaseData.user.name,
             };
           }
+          // console.log(data);
           return data;
         });
 
@@ -71,14 +95,8 @@ class Chatbot extends Component {
             id,
             messages: [
               {
-                _id: 2,
-                text: `Hello, ${this.props.route.params.name}. My name is Mr Bot`,
-                createdAt: new Date().getTime(),
-                user: BOT,
-              },
-              {
                 _id: 1,
-                text: 'Hi',
+                text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
                 createdAt: new Date().getTime(),
                 user: BOT,
               },
@@ -89,53 +107,60 @@ class Chatbot extends Component {
       .catch(function (err) {
         console.log(err);
       });
+
+    firestore()
+      .collection('ChatbotHistory')
+      .doc(id)
+      .collection('Messages')
+      .add(
+        (msg = {
+          text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
+          createdAt: new Date().getTime(),
+          user: BOT,
+        }),
+      );
+
+    msg._id = this.state.messages.length + 1;
+
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, [msg]),
+    }));
   }
 
-  var _signIn = async () => {
-    console.log('signIn');
-    try {
-      console.log('signIn');
-      await GoogleSignin.hasPlayServices();
-      const {accessToken, idToken} = await GoogleSignin.signIn();
-      setLoggedIn(true);
-      const credential = auth.GoogleAuthProvider.credential(
-        idToken,
-        accessToken,
-      );
-      await auth().signInWithCredential(credential);
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        alert('Cancel');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        alert('Sign in in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        alert('PLAY_SERVICES_NOT_AVAILABLE');
-      } else {
-      }
-    }
-  };
+  handleGoogleResponse(result) {
+    let text = result.queryResult.fulfillmentMessages[0].text.text[0];
 
-  var signOut = async () => {
-    try {
-      console.log('begin signOut');
-      // await GoogleSignin.revokeAccess();
-      // console.log('middle signOut');
-      await GoogleSignin.signOut();
-      console.log('after signOut');
-      auth()
-        .signOut()
-        .then(() => alert('You are signed out.'));
-      setLoggedIn(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+    this.sendBotResponse(text); //sends Dialogflow's response to the user
+  }
 
-  const LoginFailure = response => {
-    console.log(response);
-    console.log('response');
-    swal('Login fail');
-  };
+  // display DF's response to user
+  sendBotResponse(text) {
+    let msg = {
+      text,
+      createdAt: new Date().getTime(),
+      user: BOT, // BOT will forward message to user
+    };
+
+    const {id} = this.props.route.params;
+    firestore()
+      .collection('ChatbotHistory')
+      .doc(id)
+      .collection('Messages')
+      .add(msg);
+
+    msg._id = this.state.messages.length + 1;
+
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, [msg]),
+    }));
+  }
+
+  // when user sends a message, chatbot will send to DF
+  onSend(messages = []) {
+    // appends new message to array with all previous messages so that we can keep track.
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }));
 
     let text = messages[0].text; //what user types. will be forwarded to Dialogflow
 
@@ -153,6 +178,17 @@ class Chatbot extends Component {
           name: name,
         },
       });
+
+    const contexts = [
+      {
+        name: 'username',
+        lifespan: 10,
+        parameters: {
+          name: name,
+        },
+      },
+    ];
+    Dialogflow_V2.setContexts(contexts);
 
     // Dialogflow will select response to send to BOT. stores response inside variable "result"
     Dialogflow_V2.requestQuery(
@@ -190,3 +226,5 @@ class Chatbot extends Component {
     );
   }
 }
+
+export default Chatbot;
