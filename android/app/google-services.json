@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1068011813609",
+    "firebase_url": "https://fyp-chatbot-6496a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fyp-chatbot-6496a",
+    "storage_bucket": "fyp-chatbot-6496a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068011813609:android:f8765b9931b7e9e699ce78",
+        "android_client_info": {
+          "package_name": "com.fypchatbot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1068011813609-aejjl6h6b4ia9h7tdgtjoaanodpr8c5o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-AwpM9gEkl9pcLL3qxSQR0brZJxH1-fk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1068011813609-aejjl6h6b4ia9h7tdgtjoaanodpr8c5o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1068011813609-l1a66eq0f7sbje685jnl3khotqrtb6h6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.Chatbot"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,7 +21,7 @@ class Chatbot extends Component {
     name: '',
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     Dialogflow_V2.setConfiguration(
       dialogflowConfig.client_email,
       dialogflowConfig.private_key,
@@ -31,6 +31,32 @@ class Chatbot extends Component {
 
     const {name, id} = this.props.route.params;
     console.log(this.props);
+
+    // load exercise 1 based on medical condition
+    // get medical condition
+    console.log(name);
+    medicalCondition = await firestore()
+      .collection('Users')
+      .doc(name)
+      .get()
+      .then(function (doc) {
+        // console.log(doc.data().medicalCondition);
+        return doc.data().medicalCondition; //must return variable, if not cannot access it outside of this block
+      });
+
+    console.log(medicalCondition);
+
+    const snapshot = await firestore()
+      .collection(medicalCondition)
+      .limit(1)
+      .get();
+
+    const exercise = snapshot.docs.map(doc => doc.id);
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      return;
+    }
+    console.log(exercise);
 
     firestore()
       .collection('ChatbotHistory')
@@ -56,6 +82,7 @@ class Chatbot extends Component {
               name: firebaseData.user.name,
             };
           }
+          // console.log(data);
           return data;
         });
 
@@ -68,14 +95,8 @@ class Chatbot extends Component {
             id,
             messages: [
               {
-                _id: 2,
-                text: `Hello, ${this.props.route.params.name}. My name is Mr Bot`,
-                createdAt: new Date().getTime(),
-                user: BOT,
-              },
-              {
                 _id: 1,
-                text: 'Hi',
+                text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
                 createdAt: new Date().getTime(),
                 user: BOT,
               },
@@ -86,6 +107,24 @@ class Chatbot extends Component {
       .catch(function (err) {
         console.log(err);
       });
+
+    firestore()
+      .collection('ChatbotHistory')
+      .doc(id)
+      .collection('Messages')
+      .add(
+        (msg = {
+          text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
+          createdAt: new Date().getTime(),
+          user: BOT,
+        }),
+      );
+
+    msg._id = this.state.messages.length + 1;
+
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, [msg]),
+    }));
   }
 
   handleGoogleResponse(result) {
@@ -139,6 +178,17 @@ class Chatbot extends Component {
           name: name,
         },
       });
+
+    const contexts = [
+      {
+        name: 'username',
+        lifespan: 10,
+        parameters: {
+          name: name,
+        },
+      },
+    ];
+    Dialogflow_V2.setContexts(contexts);
 
     // Dialogflow will select response to send to BOT. stores response inside variable "result"
     Dialogflow_V2.requestQuery(
