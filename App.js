@@ -3,8 +3,7 @@ import {SafeAreaView, Text, TouchableOpacity, View, Button} from 'react-native';
 import Login from './app/screens/Login';
 import Chatbot from './app/screens/Chatbot';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
-import 'react-native-gesture-handler';
+import {createStackNavigator} from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import {
   GoogleSignin,
@@ -16,7 +15,7 @@ const Stack = createStackNavigator();
 const App = () => {
   return (
     <>
-      <NavigationContainer>
+      <NavigationContainer initialRouteName="Login">
         <Stack.Navigator>
           <Stack.Screen
             name="Login"
