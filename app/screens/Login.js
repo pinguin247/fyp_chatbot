@@ -18,27 +18,33 @@ export default function Login({navigation}) {
       offlineAccess: true,
     });
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    console.log('useEffect');
     return subscriber;
   });
 
   // keep track of user's sign in status
   function onAuthStateChanged(user) {
     setUser(user);
+    console.log('onAuthStateChanged');
+    console.log(user);
     if (user) setLoggedIn(true); // if user is logged in, set login to true.
   }
 
   var _signIn = async () => {
-    console.log('signIn');
+    // console.log('signIn');
     try {
       console.log('signIn');
       await GoogleSignin.hasPlayServices();
-      const {accessToken, idToken} = await GoogleSignin.signIn();
+      const {accessToken, idToken} = await GoogleSignin.signIn(); //problem here. doesn't wait
+      console.log('after googlesignin.signin');
       setLoggedIn(true);
+      console.log('after setloggedin');
       const credential = auth.GoogleAuthProvider.credential(
         idToken,
         accessToken,
       );
-      await auth().signInWithCredential(credential);
+
+      const randomVar = await auth().signInWithCredential(credential);
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         alert('Cancel');
@@ -49,6 +55,7 @@ export default function Login({navigation}) {
       } else {
       }
     }
+    console.log('signIn Success');
   };
 
   var signOut = async () => {
