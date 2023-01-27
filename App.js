@@ -20,11 +20,22 @@ import {
 
 import messaging from '@react-native-firebase/messaging';
 import {GiftedChat} from 'react-native-gifted-chat';
+import PushNotification from 'react-native-push-notification';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   const [messages, setMessages] = useState([]);
+
+  async function requestUserPermission() {
+    const authorizationStatus = await messaging().requestPermission();
+
+    if (authorizationStatus) {
+      console.log('Permission status:', authorizationStatus);
+    }
+  }
+
+  requestUserPermission();
 
   // Register background handler
   // Get the notification
@@ -55,6 +66,20 @@ const App = () => {
   });
 
   useEffect(() => {
+    PushNotification.configure({
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: function (token) {
+        console.log('TOKEN:', token);
+      },
+      // (required) Called when a remote or local notification is opened or received
+      onNotification: function (notification) {
+        console.log('REMOTE NOTIFICATION ==>', notification);
+        // process the notification here
+      },
+      popInitialNotification: true,
+      requestPermissions: true,
+    });
+
     // Get the notification message
     const subscribe = messaging().onMessage(async remoteMessage => {
       // Get the message body
@@ -65,6 +90,8 @@ const App = () => {
 
       // Get message image
       let avatar = remoteMessage.notification.android.imageUrl;
+
+      console.log(message_body);
 
       // Append the message to the current messages state
       setMessages(messages =>
@@ -94,7 +121,7 @@ const App = () => {
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{title: 'Login'}}
+            options={{title: 'Home'}}
           />
           <Stack.Screen
             name="Chatbot"

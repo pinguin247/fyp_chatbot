@@ -1,9 +1,11 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 import {Dialogflow_V2} from 'react-native-dialogflow';
 import {dialogflowConfig} from '../env';
 import firestore from '@react-native-firebase/firestore';
+import ReactNativeCalendarEvents from 'react-native-calendar-events';
+import {create} from 'react-test-renderer';
 
 const botAvatar = require('../assets/images/mascot.png');
 
@@ -51,7 +53,8 @@ class Chatbot extends Component {
       .limit(1)
       .get();
 
-    const exercise = snapshot.docs.map(doc => doc.id);
+    exercise = snapshot.docs.map(doc => doc.id)[0];
+
     if (snapshot.empty) {
       console.log('No matching documents.');
       return;
@@ -133,6 +136,30 @@ class Chatbot extends Component {
     this.sendBotResponse(text); //sends Dialogflow's response to the user
   }
 
+  async createCalendarEvent() {
+    const calendarStatus = await ReactNativeCalendarEvents.requestPermissions();
+
+    if (calendarStatus) {
+      console.log('Calendar permission status:', calendarStatus);
+    }
+    const newDate = new Date();
+    newDate.setHours(newDate.getHours() + 1);
+
+    ReactNativeCalendarEvents.saveEvent(exercise, {
+      calendarId: '3',
+      startDate: newDate.toISOString(),
+      endDate: newDate.toISOString(),
+      location: 'Kopitiam',
+    })
+      .then(value => {
+        console.log('Event Id--->', value);
+        return 1;
+      })
+      .catch(error => {
+        console.log('Error: ', error);
+      });
+  }
+
   // display DF's response to user
   sendBotResponse(text) {
     let msg = {
@@ -153,6 +180,27 @@ class Chatbot extends Component {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
+
+    if (
+      text == 'Great! Let me know how you feel after exercising.' ||
+      "Let's go!"
+    ) {
+      success = this.createCalendarEvent();
+
+      if (success) {
+        msg = {
+          text: `${exercise} added to calendar successfully.`,
+          createdAt: new Date().getTime(),
+          user: BOT,
+        };
+
+        msg._id = this.state.messages.length + 1;
+
+        this.setState(previousState => ({
+          messages: GiftedChat.append(previousState.messages, [msg]),
+        }));
+      }
+    }
   }
 
   // when user sends a message, chatbot will send to DF
