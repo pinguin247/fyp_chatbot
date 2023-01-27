@@ -22,6 +22,9 @@ import messaging from '@react-native-firebase/messaging';
 import {GiftedChat} from 'react-native-gifted-chat';
 import PushNotification from 'react-native-push-notification';
 
+import ArticleFeed from './app/screens/ArticleFeed';
+import ReviewDetails from './app/screens/ReviewDetails';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -127,6 +130,16 @@ const App = () => {
             name="Chatbot"
             component={Chatbot}
             options={{title: 'Chat Room'}}
+          />
+          <Stack.Screen
+            name="ArticleFeed"
+            component={ArticleFeed}
+            options={{title: 'Article feed'}}
+          />
+          <Stack.Screen
+            name="ReviewDetails"
+            component={ReviewDetails}
+            options={{title: 'Review Details'}}
           />
         </Stack.Navigator>
       </NavigationContainer>

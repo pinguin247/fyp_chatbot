@@ -101,6 +101,15 @@ export default function Login({navigation}) {
                   })
                 }
               />
+              <Button
+                title="Article feed"
+                onPress={() =>
+                  navigation.navigate('ArticleFeed', {
+                    name: user.displayName,
+                    id: user.uid,
+                  })
+                }
+              />
               <Button onPress={signOut} title="Logout" color="red" />
             </View>
           ) : (
