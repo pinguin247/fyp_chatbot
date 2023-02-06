@@ -6,6 +6,7 @@ import {dialogflowConfig} from '../env';
 import firestore from '@react-native-firebase/firestore';
 import ReactNativeCalendarEvents from 'react-native-calendar-events';
 import {create} from 'react-test-renderer';
+import {firebase} from '@react-native-firebase/auth';
 
 const botAvatar = require('../assets/images/mascot.png');
 
@@ -14,6 +15,8 @@ const BOT = {
   name: 'Mr Bot',
   avatar: botAvatar,
 };
+
+var exercise = '';
 
 class Chatbot extends Component {
   // initial message. id is messages'. id is different from BOT's id and user's id
@@ -132,6 +135,7 @@ class Chatbot extends Component {
 
   handleGoogleResponse(result) {
     let text = result.queryResult.fulfillmentMessages[0].text.text[0];
+    console.log('handleGoogleResponse: ' + text);
 
     this.sendBotResponse(text); //sends Dialogflow's response to the user
   }
@@ -143,13 +147,13 @@ class Chatbot extends Component {
       console.log('Calendar permission status:', calendarStatus);
     }
     const newDate = new Date();
-    newDate.setHours(newDate.getHours() + 1);
+    newDate.setHours(newDate.getHours() + 2);
 
     ReactNativeCalendarEvents.saveEvent(exercise, {
       calendarId: '3',
       startDate: newDate.toISOString(),
       endDate: newDate.toISOString(),
-      location: 'Kopitiam',
+      location: 'Punggol Park',
     })
       .then(value => {
         console.log('Event Id--->', value);
@@ -158,6 +162,27 @@ class Chatbot extends Component {
       .catch(error => {
         console.log('Error: ', error);
       });
+
+    // add to firestore
+    console.log('Name in firestore: ' + this.props.route.params.name);
+    await firestore()
+      .collection('Users')
+      .doc(this.props.route.params.name)
+      .update({
+        UpcomingActivities: firebase.firestore.FieldValue.arrayUnion(
+          exercise +
+            ' on ' +
+            newDate.toDateString() +
+            ' at ' +
+            newDate.getHours() +
+            2,
+        ),
+      });
+    // .get()
+    // .then(function (doc) {
+
+    //   return doc.data().medicalCondition; //must return variable, if not cannot access it outside of this block
+    // })
   }
 
   // display DF's response to user
@@ -181,15 +206,23 @@ class Chatbot extends Component {
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
 
+    if (text.includes('What about')) {
+      text = text.replace('What about ', '');
+      text = text.replace(' instead?', '');
+      exercise = text;
+    }
+
     if (
       text == 'Great! Let me know how you feel after exercising.' ||
-      "Let's go!"
+      text == "Let's go!"
     ) {
       success = this.createCalendarEvent();
 
       if (success) {
         msg = {
-          text: `${exercise} added to calendar successfully.`,
+          text: `${exercise} added to calendar for ${
+            newDate.getHours() + 2
+          } successfully.`,
           createdAt: new Date().getTime(),
           user: BOT,
         };

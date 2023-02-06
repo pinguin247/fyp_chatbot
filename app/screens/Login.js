@@ -93,7 +93,7 @@ export default function Login({navigation}) {
             <View style={{alignItems: 'center'}}>
               <Text>Welcome {user.displayName}</Text>
               <Button
-                title="Go to Chat Room"
+                title="Chat Room"
                 onPress={() =>
                   navigation.navigate('Chatbot', {
                     name: user.displayName,
@@ -105,6 +105,15 @@ export default function Login({navigation}) {
                 title="Article feed"
                 onPress={() =>
                   navigation.navigate('ArticleFeed', {
+                    name: user.displayName,
+                    id: user.uid,
+                  })
+                }
+              />
+              <Button
+                title="Upcoming activities"
+                onPress={() =>
+                  navigation.navigate('UpcomingActivities', {
                     name: user.displayName,
                     id: user.uid,
                   })

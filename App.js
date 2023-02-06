@@ -23,7 +23,8 @@ import {GiftedChat} from 'react-native-gifted-chat';
 import PushNotification from 'react-native-push-notification';
 
 import ArticleFeed from './app/screens/ArticleFeed';
-import ReviewDetails from './app/screens/ReviewDetails';
+import ArticleDetails from './app/screens/ArticleDetails';
+import UpcomingActivities from './app/screens/UpcomingActivities';
 
 const Stack = createStackNavigator();
 
@@ -137,9 +138,14 @@ const App = () => {
             options={{title: 'Article feed'}}
           />
           <Stack.Screen
-            name="ReviewDetails"
-            component={ReviewDetails}
-            options={{title: 'Review Details'}}
+            name="ArticleDetails"
+            component={ArticleDetails}
+            options={{title: 'Article Details'}}
+          />
+          <Stack.Screen
+            name="UpcomingActivities"
+            component={UpcomingActivities}
+            options={{title: 'Upcoming activities'}}
           />
         </Stack.Navigator>
       </NavigationContainer>
