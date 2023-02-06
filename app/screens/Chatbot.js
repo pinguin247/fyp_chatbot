@@ -51,12 +51,27 @@ class Chatbot extends Component {
 
     console.log(medicalCondition);
 
-    const snapshot = await firestore()
-      .collection(medicalCondition)
-      .limit(1)
-      .get();
+    disability = await firestore()
+      .collection('Users')
+      .doc(name)
+      .get()
+      .then(function (doc) {
+        // console.log(doc.data().medicalCondition);
+        return doc.data().disability; //must return variable, if not cannot access it outside of this block
+      });
 
-    exercise = snapshot.docs.map(doc => doc.id)[0];
+    console.log(disability);
+
+    const snapshot = await firestore()
+      .collection(`Selection`)
+      .doc(medicalCondition)
+      .get()
+      .then(function (doc) {
+        return doc.data().disability;
+      });
+
+    exercise = snapshot[disability];
+    // snapshot.docs.map(doc => doc.id)[0];
 
     if (snapshot.empty) {
       console.log('No matching documents.');
@@ -102,7 +117,7 @@ class Chatbot extends Component {
             messages: [
               {
                 _id: 1,
-                text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
+                text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise} today! It's great for ${medicalCondition} patients like yourself.`,
                 createdAt: new Date().getTime(),
                 user: BOT,
               },
@@ -120,7 +135,7 @@ class Chatbot extends Component {
       .collection('Messages')
       .add(
         (msg = {
-          text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise}!`,
+          text: `Hello, ${this.props.route.params.name}. Let's do some ${exercise} today! It's great for ${medicalCondition} patients like yourself.`,
           createdAt: new Date().getTime(),
           user: BOT,
         }),
@@ -175,7 +190,8 @@ class Chatbot extends Component {
             newDate.toDateString() +
             ' at ' +
             newDate.getHours() +
-            2,
+            ':' +
+            newDate.getMinutes(),
         ),
       });
     // .get()
@@ -221,7 +237,7 @@ class Chatbot extends Component {
       if (success) {
         msg = {
           text: `${exercise} added to calendar for ${
-            newDate.getHours() + 2
+            new Date().getHours() + 2 + ':' + new Date().getMinutes()
           } successfully.`,
           createdAt: new Date().getTime(),
           user: BOT,
