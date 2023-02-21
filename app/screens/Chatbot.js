@@ -230,7 +230,7 @@ class Chatbot extends Component {
 
     if (
       text == 'Great! Let me know how you feel after exercising.' ||
-      text == "Let's go!"
+      text.includes("Let's get moving!")
     ) {
       success = this.createCalendarEvent();
 
