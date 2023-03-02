@@ -145,7 +145,7 @@ const App = () => {
           <Stack.Screen
             name="UpcomingActivities"
             component={UpcomingActivities}
-            options={{title: 'Upcoming activities'}}
+            options={{title: 'Schedule'}}
           />
         </Stack.Navigator>
       </NavigationContainer>

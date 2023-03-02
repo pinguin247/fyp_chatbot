@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 // import {FlatList, View, Text} from 'react-native';
 import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
-import {View, Text} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import Card from './Card';
 import firestore from '@react-native-firebase/firestore';
 
@@ -40,13 +40,24 @@ export default function ArticleFeed({navigation}) {
 
   return (
     <View>
+      <View style={{alignItems: 'center'}}>
+        <Image
+          source={require('../assets/images/blog.png')}
+          style={{width: 90, height: 90, marginBottom: 10}}></Image>
+      </View>
       <FlatList
         data={reviews}
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() => navigation.navigate('ArticleDetails', item)}>
             <Card>
-              <Text>{item.title}</Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: 'black',
+                }}>
+                {item.title}
+              </Text>
             </Card>
           </TouchableOpacity>
         )}

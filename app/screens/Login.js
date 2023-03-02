@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {SafeAreaView, Text, TouchableOpacity, View, Button} from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
+  Button,
+  ImageBackground,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {
   GoogleSignin,
@@ -91,8 +98,15 @@ export default function Login({navigation}) {
           }}>
           {user ? (
             <View style={{alignItems: 'center'}}>
-              <Text>Welcome {user.displayName}</Text>
-              <Button
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: '700',
+                  color: 'black',
+                }}>
+                Welcome {user.displayName}
+              </Text>
+              {/* <Button
                 title="Chat Room"
                 onPress={() =>
                   navigation.navigate('Chatbot', {
@@ -100,8 +114,41 @@ export default function Login({navigation}) {
                     id: user.uid,
                   })
                 }
-              />
-              <Button
+              /> */}
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('Chatbot', {
+                    name: user.displayName,
+                    id: user.uid,
+                  })
+                }>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 20,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    height: 70,
+                    marginTop: 20,
+                    width: 180,
+                  }}>
+                  <ImageBackground
+                    source={require('../assets/images/chat.png')}
+                    style={{width: 50, height: 50}}></ImageBackground>
+
+                  <Text
+                    style={{
+                      marginLeft: 15,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Chat Room
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              {/* <Button
                 title="Article feed"
                 onPress={() =>
                   navigation.navigate('ArticleFeed', {
@@ -109,8 +156,76 @@ export default function Login({navigation}) {
                     id: user.uid,
                   })
                 }
-              />
-              <Button
+              /> */}
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ArticleFeed', {
+                    name: user.displayName,
+                    id: user.uid,
+                  })
+                }>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 20,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    height: 70,
+                    width: 180,
+                    marginTop: 20,
+                  }}>
+                  <ImageBackground
+                    source={require('../assets/images/publication.png')}
+                    style={{width: 50, height: 50}}></ImageBackground>
+
+                  <Text
+                    style={{
+                      marginLeft: 15,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Article Feed
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('UpcomingActivities', {
+                    name: user.displayName,
+                    id: user.uid,
+                  })
+                }>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 20,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    height: 70,
+                    width: 180,
+                    marginTop: 20,
+                  }}>
+                  <ImageBackground
+                    source={require('../assets/images/upcoming.png')}
+                    style={{width: 50, height: 50}}></ImageBackground>
+
+                  <Text
+                    style={{
+                      marginLeft: 15,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Schedule
+                  </Text>
+                </View>
+              </TouchableOpacity>
+
+              {/* <Button
                 title="Upcoming activities"
                 onPress={() =>
                   navigation.navigate('UpcomingActivities', {
@@ -118,16 +233,69 @@ export default function Login({navigation}) {
                     id: user.uid,
                   })
                 }
-              />
-              <Button onPress={signOut} title="Logout" color="red" />
+              /> */}
+              {/* <Button onPress={signOut} title="Logout" color="red" /> */}
+              <TouchableOpacity onPress={signOut}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    padding: 20,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    height: 70,
+                    width: 180,
+                    marginTop: 20,
+                  }}>
+                  <ImageBackground
+                    source={require('../assets/images/logout.png')}
+                    style={{width: 50, height: 50}}></ImageBackground>
+                  <Text
+                    style={{
+                      marginLeft: 15,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Logout
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
           ) : (
             <View>
-              <Text>Please sign in to use the Chatbot</Text>
-              <Button
+              <Text style={{fontSize: 20, fontWeight: '500', color: 'black'}}>
+                Please sign in to use the Chatbot
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  padding: 20,
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: 20,
+                  height: 70,
+                  marginTop: 20,
+                }}>
+                <TouchableOpacity onPress={_signIn}>
+                  <ImageBackground
+                    source={require('../assets/images/login-.png')}
+                    style={{width: 50, height: 50}}></ImageBackground>
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    marginLeft: 15,
+                    fontSize: 15,
+                    fontWeight: '500',
+                    color: 'black',
+                  }}>
+                  Login using Google
+                </Text>
+              </View>
+              {/* <Button
                 onPress={_signIn}
                 title="Login using Google"
-                color="red"></Button>
+                color="red"></Button> */}
             </View>
           )}
         </View>
