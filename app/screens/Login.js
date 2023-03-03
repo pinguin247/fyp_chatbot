@@ -6,6 +6,7 @@ import {
   View,
   Button,
   ImageBackground,
+  Image,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {
@@ -264,34 +265,46 @@ export default function Login({navigation}) {
             </View>
           ) : (
             <View>
-              <Text style={{fontSize: 20, fontWeight: '500', color: 'black'}}>
-                Please sign in to use the Chatbot
-              </Text>
-              <View
+              <View style={{alignItems: 'center', marginBottom: 20}}>
+                <Image
+                  source={require('../assets/images/healthy.png')}
+                  style={{width: 90, height: 90, marginBottom: 10}}></Image>
+              </View>
+              <Text
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  padding: 20,
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: 20,
-                  height: 70,
-                  marginTop: 20,
+                  fontSize: 20,
+                  fontWeight: '500',
+                  color: 'black',
+                  alignContent: 'center',
                 }}>
-                <TouchableOpacity onPress={_signIn}>
+                Login to use application
+              </Text>
+              <TouchableOpacity onPress={_signIn}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 20,
+                    height: 70,
+                    marginTop: 20,
+                  }}>
                   <ImageBackground
                     source={require('../assets/images/login-.png')}
                     style={{width: 50, height: 50}}></ImageBackground>
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    marginLeft: 15,
-                    fontSize: 15,
-                    fontWeight: '500',
-                    color: 'black',
-                  }}>
-                  Login using Google
-                </Text>
-              </View>
+
+                  <Text
+                    style={{
+                      marginLeft: 15,
+                      fontSize: 15,
+                      fontWeight: '500',
+                      color: 'black',
+                    }}>
+                    Login using Google
+                  </Text>
+                </View>
+              </TouchableOpacity>
               {/* <Button
                 onPress={_signIn}
                 title="Login using Google"
