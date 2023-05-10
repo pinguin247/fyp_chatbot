@@ -264,7 +264,13 @@ export default function Login({navigation}) {
               </TouchableOpacity>
             </View>
           ) : (
-            <View>
+            <View
+              style={{
+                fontSize: 20,
+                fontWeight: '500',
+                color: 'black',
+                alignItems: 'center',
+              }}>
               <View style={{alignItems: 'center', marginBottom: 20}}>
                 <Image
                   source={require('../assets/images/healthy.png')}
@@ -277,18 +283,27 @@ export default function Login({navigation}) {
                   color: 'black',
                   alignContent: 'center',
                 }}>
-                Login to use application
+                HealthBoost
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '400',
+                  color: 'black',
+                  alignContent: 'center',
+                }}>
+                Your one stop app to keep fit
               </Text>
               <TouchableOpacity onPress={_signIn}>
                 <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
-
                     backgroundColor: '#FFFFFF',
                     borderRadius: 20,
                     height: 70,
                     marginTop: 20,
+                    width: 220,
                   }}>
                   <ImageBackground
                     source={require('../assets/images/login-.png')}
