@@ -1,42 +1,43 @@
 {
   "project_info": {
-    "project_number": "1068011813609",
-    "firebase_url": "https://fyp-chatbot-6496a-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "fyp-chatbot-6496a",
-    "storage_bucket": "fyp-chatbot-6496a.appspot.com"
+    "project_number": "357407143584",
+    "firebase_url": "https://fyp-chatbot-5edb5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fyp-chatbot-5edb5",
+    "storage_bucket": "fyp-chatbot-5edb5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1068011813609:android:f8765b9931b7e9e699ce78",
+        "mobilesdk_app_id": "1:357407143584:android:63cd1311a6c3302a2b7bc5",
         "android_client_info": {
           "package_name": "com.fypchatbot"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1068011813609-aejjl6h6b4ia9h7tdgtjoaanodpr8c5o.apps.googleusercontent.com",
+          "client_id": "357407143584-d70437e87mieahdifcfj14alig2ov4va.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fypchatbot",
+            "certificate_hash": "96b9ad72ee6d3d3815fcaae70bbd4247d13a88a1"
+          }
+        },
+        {
+          "client_id": "357407143584-ij7poor10njtju1qj5bubnf0fl7os4jl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB-AwpM9gEkl9pcLL3qxSQR0brZJxH1-fk"
+          "current_key": "AIzaSyCHjOVeqXQu4WgNR9OYvEbnQ_6SX7ZDWdw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1068011813609-aejjl6h6b4ia9h7tdgtjoaanodpr8c5o.apps.googleusercontent.com",
+              "client_id": "357407143584-ij7poor10njtju1qj5bubnf0fl7os4jl.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "1068011813609-l1a66eq0f7sbje685jnl3khotqrtb6h6.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.reactjs.native.example.Chatbot"
-              }
             }
           ]
         }

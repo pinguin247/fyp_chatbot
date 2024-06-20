@@ -8,7 +8,7 @@ import ReactNativeCalendarEvents from 'react-native-calendar-events';
 import {create} from 'react-test-renderer';
 import {firebase} from '@react-native-firebase/auth';
 
-const botAvatar = require('../assets/images/mascot.png');
+const botAvatar = require('../assets/images/jjlin.png');
 
 const BOT = {
   _id: 2,
@@ -61,6 +61,17 @@ class Chatbot extends Component {
       });
 
     console.log(disability);
+
+//    tracker = await firestore()
+//      .collection('tracker')
+//      .doc(name)
+//      .get()
+//      .then(function (doc) {
+//        // console.log(doc.data().medicalCondition);
+//        return doc.data().tracker; //must return variable, if not cannot access it outside of this block
+//      });
+//
+//      console.log(tracker)
 
     const snapshot = await firestore()
       .collection(`Selection`)

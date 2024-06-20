@@ -22,7 +22,7 @@ export default function Login({navigation}) {
     GoogleSignin.configure({
       scopes: ['email'],
       webClientId:
-        '1068011813609-aejjl6h6b4ia9h7tdgtjoaanodpr8c5o.apps.googleusercontent.com',
+        '357407143584-d70437e87mieahdifcfj14alig2ov4va.apps.googleusercontent.com',
       offlineAccess: true,
     });
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -40,9 +40,10 @@ export default function Login({navigation}) {
 
   var _signIn = async () => {
     // console.log('signIn');
-    try {
+//    try {
       console.log('signIn');
       await GoogleSignin.hasPlayServices();
+      console.log('Google Play Services available. Trying to sign in...');
       const {accessToken, idToken} = await GoogleSignin.signIn(); //problem here. doesn't wait
       console.log('after googlesignin.signin');
       setLoggedIn(true);
@@ -53,16 +54,16 @@ export default function Login({navigation}) {
       );
 
       const randomVar = await auth().signInWithCredential(credential);
-    } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        alert('Cancel');
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        alert('Sign in in progress');
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        alert('PLAY_SERVICES_NOT_AVAILABLE');
-      } else {
-      }
-    }
+//    } catch (error) {
+//      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+//        alert('Cancel');
+//      } else if (error.code === statusCodes.IN_PROGRESS) {
+//        alert('Sign in in progress');
+//      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+//        alert('PLAY_SERVICES_NOT_AVAILABLE');
+//      } else {
+//      }
+//    }
     console.log('signIn Success');
   };
 
