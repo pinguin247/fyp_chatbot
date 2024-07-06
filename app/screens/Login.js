@@ -22,7 +22,7 @@ export default function Login({navigation}) {
     GoogleSignin.configure({
       scopes: ['email'],
       webClientId:
-        '357407143584-d70437e87mieahdifcfj14alig2ov4va.apps.googleusercontent.com',
+        '357407143584-ij7poor10njtju1qj5bubnf0fl7os4jl.apps.googleusercontent.com',
       offlineAccess: true,
     });
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -44,7 +44,7 @@ export default function Login({navigation}) {
       console.log('signIn');
       await GoogleSignin.hasPlayServices();
       console.log('Google Play Services available. Trying to sign in...');
-      const {accessToken, idToken} = await GoogleSignin.signIn(); //problem here. doesn't wait
+    const {accessToken, idToken} = await GoogleSignin.signIn(); //problem here. doesn't wait
       console.log('after googlesignin.signin');
       setLoggedIn(true);
       console.log('after setloggedin');

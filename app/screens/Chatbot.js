@@ -49,6 +49,23 @@ class Chatbot extends Component {
         return doc.data().medicalCondition; //must return variable, if not cannot access it outside of this block
       });
 
+    //load tracker info with the most recent date
+    const week = 10;
+      const querySnapshot = await firestore()
+        .collection('tracker')
+        .where('week_no','==',9)
+        .limit(1)  // Limit to only the most recent document
+        .get();
+
+      const tracker = querySnapshot.docs[0].data();  // Get the data of the first (and only) document
+      console.log(tracker);
+     let boost;
+     if(tracker.total_weekly >= 150){
+        boost = "You hit your target last week. Keep it up!";
+     }else{
+        boost = "You didn't hit your target last week! Let's try again this week.";
+     }
+
     console.log(medicalCondition);
 
     disability = await firestore()
@@ -62,19 +79,8 @@ class Chatbot extends Component {
 
     console.log(disability);
 
-//    tracker = await firestore()
-//      .collection('tracker')
-//      .doc(name)
-//      .get()
-//      .then(function (doc) {
-//        // console.log(doc.data().medicalCondition);
-//        return doc.data().tracker; //must return variable, if not cannot access it outside of this block
-//      });
-//
-//      console.log(tracker)
-
     const snapshot = await firestore()
-      .collection(`Selection`)
+      .collection('Selection')
       .doc(medicalCondition)
       .get()
       .then(function (doc) {
@@ -132,6 +138,12 @@ class Chatbot extends Component {
                 createdAt: new Date().getTime(),
                 user: BOT,
               },
+                {
+                  _id: 2,
+                  text: boost,
+                  createdAt: new Date().getTime(),
+                  user: BOT,
+                }
             ],
           });
         }
@@ -152,19 +164,38 @@ class Chatbot extends Component {
         }),
       );
 
-    msg._id = this.state.messages.length + 1;
+  firestore()
+    .collection('ChatbotHistory')
+    .doc(id)
+    .collection('Messages')
+    .add(
+      (msg = {
+        text: boost,
+        createdAt: new Date().getTime(),
+        user: BOT,
+      }),
+    );
+
+
+    msg._id = this.state.messages.length + 2;
 
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
   }
 
-  handleGoogleResponse(result) {
+handleGoogleResponse(result) {
+  // Check if the result and fulfillmentMessages exist before trying to access text
+  if (result && result.queryResult && result.queryResult.fulfillmentMessages) {
     let text = result.queryResult.fulfillmentMessages[0].text.text[0];
     console.log('handleGoogleResponse: ' + text);
-
     this.sendBotResponse(text); //sends Dialogflow's response to the user
+  } else {
+    // Log an error or handle the absence of data gracefully
+    console.error('Failed to receive a valid response from Dialogflow:', result);
+    this.sendBotResponse("Sorry, I couldn't fetch the details. Please try again."); // Send a fallback message
   }
+}
 
   async createCalendarEvent() {
     const calendarStatus = await ReactNativeCalendarEvents.requestPermissions();
