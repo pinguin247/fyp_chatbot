@@ -35,7 +35,7 @@ class Chatbot extends Component {
     );
 
     const {name, id} = this.props.route.params;
-    console.log(this.props);
+    //console.log(this.props);
 
     // load exercise 1 based on medical condition
     // get medical condition
@@ -48,25 +48,25 @@ class Chatbot extends Component {
         // console.log(doc.data().medicalCondition);
         return doc.data().medicalCondition; //must return variable, if not cannot access it outside of this block
       });
+     console.log(medicalCondition);
 
     //load tracker info with the most recent date
-    const week = 10;
-      const querySnapshot = await firestore()
-        .collection('tracker')
-        .where('week_no','==',9)
-        .limit(1)  // Limit to only the most recent document
-        .get();
+    const userid = 212932;
+    const dateString = "2024-06-14T06:44:44+0800";
+    const now = new Date(dateString);
+    const sevenDaysAgo = new Date(now.setDate(now.getDate() - 7));
+    const querySnapshot = await firestore()
+      .collection('tracker')
+      .where('startDate', '>=', sevenDaysAgo.toISOString())
+      .orderBy('startDate', 'desc')
+      .get();
 
-      const tracker = querySnapshot.docs[0].data();  // Get the data of the first (and only) document
-      console.log(tracker);
-     let boost;
-     if(tracker.total_weekly >= 150){
-        boost = "You hit your target last week. Keep it up!";
-     }else{
-        boost = "You didn't hit your target last week! Let's try again this week.";
-     }
+    //data of past 7 days
+    const trackerData = querySnapshot.docs.map(doc => doc.data());
+    console.log(trackerData)
 
-    console.log(medicalCondition);
+    // Determine the intervention message
+    const interventionMessage = this.determineIntervention(trackerData);
 
     disability = await firestore()
       .collection('Users')
@@ -140,7 +140,7 @@ class Chatbot extends Component {
               },
                 {
                   _id: 2,
-                  text: boost,
+                  text: interventionMessage,
                   createdAt: new Date().getTime(),
                   user: BOT,
                 }
@@ -170,7 +170,7 @@ class Chatbot extends Component {
     .collection('Messages')
     .add(
       (msg = {
-        text: boost,
+        text: interventionMessage,
         createdAt: new Date().getTime(),
         user: BOT,
       }),
@@ -183,6 +183,46 @@ class Chatbot extends Component {
       messages: GiftedChat.append(previousState.messages, [msg]),
     }));
   }
+
+// Determine Intervention to send to user
+determineIntervention(data) {
+  const dateString = "2024-06-17T06:44:44+0800";
+  const now = new Date(dateString);
+  let interventions = [];
+
+  if (data.length === 0) {
+    return "We noticed you have not clocked any exercise. How about going for a 15 minute briskwalk today after dinner?";
+  }
+
+  //====Frequency====
+  // Filter out entries with zero duration
+  const validExercises = data.filter(entry => entry.duration > 0);
+  if (validExercises.length === 0) {
+    return "We noticed you have not clocked any exercise. How about going for a 15 minute briskwalk today after dinner?";
+  }
+
+  const lastExerciseDate = new Date(validExercises[0].startDate);
+
+  // Calculate the difference in milliseconds between now and the last exercise date
+  const msDiff = now.getTime() - lastExerciseDate.getTime();  // Difference in milliseconds
+  const daysSinceLastExercise = Math.floor(msDiff / (1000 * 60 * 60 * 24));  // Convert milliseconds to days
+
+  // Log the days since last exercise
+  console.log("Days Since Last Exercise:", daysSinceLastExercise);
+
+  if (daysSinceLastExercise === 1) {
+    interventions.push("We noticed no exercise was clocked yesterday. How about going for a 15 minute briskwalk today after dinner? You are ___ minutes away from the total MVPA goal today.");
+  } else if (daysSinceLastExercise >= 2 && daysSinceLastExercise <= 5) {
+    interventions.push("We noticed you have not clocked any exercise for the past 2 days. If you skip exercise for more than 2 consecutive days, you may lose the health benefits of previous days of exercise! How about going for a briskwalk this evening? 15 minutes is all you need!");
+  } else if (daysSinceLastExercise > 5) {
+    interventions.push("We noticed you have not clocked any exercise over the past 5 days. Let us know if you have any issues. You can reach out to us through this message.");
+  } else {
+    interventions.push("WOWW SSSLAYYYY");
+  }
+
+  return interventions.join("\n");
+}
+
 
 handleGoogleResponse(result) {
   // Check if the result and fulfillmentMessages exist before trying to access text
